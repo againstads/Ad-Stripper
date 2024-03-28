@@ -69,6 +69,10 @@ if (articleStart > -1 && articleEnd > -1) {
     const modImages = articleFragment.querySelectorAll('.mod-image');
     modImages.forEach(img => img.remove());
 
+    // Also exclude associated 'figcaption' elements for those images
+    const figcaptions = articleFragment.querySelectorAll('figcaption');
+    figcaptions.forEach(caption => caption.remove());
+
     const unwantedElements = articleFragment.querySelectorAll('p');
     unwantedElements.forEach(p => {
         const textContentLower = p.textContent.toLowerCase().trim();
