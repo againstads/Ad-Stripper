@@ -25,8 +25,8 @@ function triggerFetchContent() {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
 
-            // Ignore specific elements like factbox-header
-            doc.querySelectorAll('.factbox-header').forEach(elem => elem.remove());
+            // Exclude contents within specified div classes
+            doc.querySelectorAll('.mod-image, .factbox-content').forEach(elem => elem.remove());
 
             let content = '';
             const title = doc.querySelector('title');
@@ -37,7 +37,6 @@ function triggerFetchContent() {
 
             const imgSrc = doc.querySelector('.img-container img')?.src;
             if (imgSrc) {
-                // Include the main image as an HTML element.
                 content += `<div><img src="${imgSrc}" class="img-responsive" alt="Main Image"></div>`;
             }
 
@@ -53,12 +52,9 @@ function triggerFetchContent() {
             if (articleStart > -1 && articleEnd > -1) {
                 articleContent = html.slice(articleStart, articleEnd);
                 const articleFragment = parser.parseFromString(articleContent, 'text/html');
-
-                // Flatten the articleFragment to plain text for the rest of the content.
                 content += flattenContent(articleFragment.body);
             }
 
-            // Set the content, using innerHTML for including the main image properly.
             document.getElementById('contentDisplay').innerHTML = cleanUpWhitespaceAndAddLineBreaks(content);
         })
         .catch(error => {
@@ -68,9 +64,8 @@ function triggerFetchContent() {
 }
 
 function cleanUpWhitespaceAndAddLineBreaks(htmlString) {
-    // Reduce multiple whitespace to a single space in text and reintroduce line breaks after periods.
-    let cleanedHtml = htmlString.replace(/\s\s+/g, ' ').trim();
-    cleanedHtml = cleanedHtml.replace(/\. /g, '.<br><br>');
+    let cleanedHtml = htmlString.replace(/\s\s+/g, ' ').trim(); // Reduce multiple whitespaces to a single space
+    cleanedHtml = cleanedHtml.replace(/(?<!”)\. /g, '.<br><br>'); // Add line breaks after periods not followed by a quote
     return cleanedHtml;
 }
 
@@ -83,7 +78,5 @@ function flattenContent(element) {
             text += flattenContent(node);
         }
     }
-    // Introduce a line break after sentences for improved readability.
-    text = text.replace(/\. /g, '.<br><br>');
-    return text;
+    return text.replace(/”\. /g, '”. '); // Keep quotes as a continuous paragraph
 }
