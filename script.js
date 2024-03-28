@@ -58,32 +58,36 @@ function triggerFetchContent() {
                 content += `<p class="separator">***</p>`;
             }
 
-            let articleContent = '';
-            const articleStart = html.indexOf('<!-- Article Start-->') + '<!-- Article Start-->'.length;
-            const articleEnd = html.indexOf('<!-- Article End-->');
-            if (articleStart > -1 && articleEnd > -1) {
-                articleContent = html.slice(articleStart, articleEnd);
-                const articleFragment = parser.parseFromString(articleContent, 'text/html');
+let articleContent = '';
+const articleStart = html.indexOf('<!-- Article Start-->') + '<!-- Article Start-->'.length;
+const articleEnd = html.indexOf('<!-- Article End-->');
+if (articleStart > -1 && articleEnd > -1) {
+    articleContent = html.slice(articleStart, articleEnd);
+    const articleFragment = parser.parseFromString(articleContent, 'text/html');
 
-                const unwantedElements = articleFragment.querySelectorAll('p');
-                unwantedElements.forEach(p => {
-                    const textContentLower = p.textContent.toLowerCase().trim();
+    // Exclude 'mod-image' content
+    const modImages = articleFragment.querySelectorAll('.mod-image');
+    modImages.forEach(img => img.remove());
 
-                    if (textContentLower.includes('read more:') || textContentLower.includes('sign up for') || textContentLower.includes('join')) {
-                        p.remove();
-                    }
-                });
+    const unwantedElements = articleFragment.querySelectorAll('p');
+    unwantedElements.forEach(p => {
+        const textContentLower = p.textContent.toLowerCase().trim();
 
-                const links = articleFragment.querySelectorAll('a');
-                links.forEach(link => {
-                    const text = document.createTextNode(link.textContent);
-                    link.parentNode.replaceChild(text, link);
-                });
+        if (textContentLower.includes('read more:') || textContentLower.includes('sign up for') || textContentLower.includes('join')) {
+            p.remove();
+        }
+    });
 
-                content += `<div class="content-body">${articleFragment.body.innerHTML}</div>`;
-            }
+    const links = articleFragment.querySelectorAll('a');
+    links.forEach(link => {
+        const text = document.createTextNode(link.textContent);
+        link.parentNode.replaceChild(text, link);
+    });
 
-            document.getElementById('contentDisplay').innerHTML = content;
+    content += `<div class="content-body">${articleFragment.body.innerHTML}</div>`;
+}
+
+document.getElementById('contentDisplay').innerHTML = content;
         })
         .catch(error => {
             console.error('Error fetching content:', error);
