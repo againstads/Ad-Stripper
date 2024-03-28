@@ -18,6 +18,13 @@ body {
     display: block;
 }
 
+h1 {
+    font-family: 'Amaranth', sans-serif;
+    display: flex;
+    align-items: center; /* Ensures vertical alignment */
+    font-size: 24px; /* Example size, adjust as needed */
+}
+
 h1, .headline {
     font-family: 'Amaranth', sans-serif;
 }
@@ -30,15 +37,15 @@ h1, .headline {
     font-size: smaller;
 }
 
-#ad-stripper-text {
-    line-height: 1.2em;
-    vertical-align: middle;
+.ad-stripper-icon {
+    height: 1em; /* Sets the height relative to the current font size of the h1 */
+    width: auto; /* Keeps the image aspect ratio intact */
+    margin-right: 10px; /* Adds some space between the image and the text */
+    vertical-align: middle; /* Aligns the middle of the image with the text */
 }
 
-#ad-stripper-icon {
-    height: 1.2em;
-    vertical-align: middle;
-    margin-left: 10px;
+.ad-stripper-text {
+    /* Additional styling for the text if needed */
 }
 
 .separator {
