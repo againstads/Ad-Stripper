@@ -1,16 +1,52 @@
-ebody {
+body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 0;
+    padding: 0;
 }
 
-#contentDisplay {
-    margin-top: 20px;
+#content {
+    background-color: #f9f9f9;
+    width: 50%;
+    margin-top: 0px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 0px;
+    padding-top: 45px;
+    padding-right: 25px;
+    padding-bottom: 45px;
+    padding-left: 25px;
 }
 
 .img-responsive {
-    width: 100%; /* Makes the image responsive */
-    max-width: 800px; /* Maximum width */
-    height: auto; /* Maintain aspect ratio */
-    display: block; /* Display block to allow margin auto to work */
-    margin: 0 auto; /* Center the image */
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+h1, .headline {
+    font-family: 'Amaranth', sans-serif;
+}
+
+.author-info, .content-body {
+    font-family: 'Lato', sans-serif;
+}
+
+.author-info {
+    font-size: smaller;
+}
+
+.ad-stripper-text {
+    line-height: 1.2em;
+    vertical-align: middle;
+}
+
+.ad-stripper-icon {
+    height: 1.2em;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+
+.separator {
+    text-align: center;
+    margin: 10px 0;
 }
