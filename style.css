@@ -47,10 +47,10 @@ h1, .headline {
 }
 
 .input-container {
-    display: flex; /* Aligns children (input and button) inline */
-    align-items: center; /* Centers items vertically */
-    justify-content: start; /* Aligns items to the start of the container */
-    gap: 10px; /* Adds space between the input and button */
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 25px;
 }
 
 #urlInput {
@@ -59,7 +59,7 @@ h1, .headline {
     border: 2px solid #000;
     background-color: #fff;
     border-radius: 25px;
-    flex-grow: 1; /* Allows the input to grow and fill available space */
+    flex-grow: 1;
 }
 
 #fetchContent {
