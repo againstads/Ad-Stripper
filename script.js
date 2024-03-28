@@ -1,4 +1,15 @@
 document.getElementById('fetchContent').addEventListener('click', function() {
+    triggerFetchContent();
+});
+
+document.getElementById('urlInput').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Prevent the form from submitting if it's part of a form
+        triggerFetchContent();
+    }
+});
+
+function triggerFetchContent() {
     const urlInput = document.getElementById('urlInput');
     const url = urlInput.value;
     if (!url) {
@@ -78,4 +89,4 @@ document.getElementById('fetchContent').addEventListener('click', function() {
             console.error('Error fetching content:', error);
             alert('Failed to fetch content.');
         });
-});
+}
