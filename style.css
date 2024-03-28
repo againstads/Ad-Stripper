@@ -1,19 +1,17 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Lato', sans-serif; /* Applying Lato font for consistency */
     margin: 0;
     padding: 0;
+    background-color: #fff; /* Set background to white */
+    color: #000; /* Set text color to black */
 }
 
 #content {
+    background-color: #f9f9f9;
     width: 50%;
-    margin-top: 0px;
-    margin-right: auto;
-    margin-left: auto;
-    margin-bottom: 0px;
-    padding-top: 45px;
-    padding-right: 25px;
-    padding-bottom: 45px;
-    padding-left: 25px;
+    margin: 0 auto; /* Simplified centering */
+    padding: 45px 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: adds a subtle shadow for depth */
 }
 
 .img-responsive {
@@ -26,20 +24,20 @@ h1, .headline {
     font-family: 'Amaranth', sans-serif;
 }
 
-.author-info, .content-body {
-    font-family: 'Lato', sans-serif;
+.author-info, .content-body, #urlInput, #fetchContent {
+    font-family: 'Lato', sans-serif; /* Ensuring form elements also use Lato */
 }
 
 .author-info {
     font-size: smaller;
 }
 
-.ad-stripper-text {
+#ad-stripper-text {
     line-height: 1.2em;
     vertical-align: middle;
 }
 
-.ad-stripper-icon {
+#ad-stripper-icon {
     height: 1.2em;
     vertical-align: middle;
     margin-left: 10px;
@@ -48,4 +46,23 @@ h1, .headline {
 .separator {
     text-align: center;
     margin: 10px 0;
+}
+
+/* Styling for input and button */
+#urlInput, #fetchContent {
+    font-size: 1.1em; /* Larger font size */
+    padding: 10px 15px; /* Increased padding for larger appearance */
+    border: 2px solid #000; /* Solid black border */
+    background-color: #fff; /* White background */
+    border-radius: 25px; /* Rounded corners */
+    margin: 5px 0; /* Margin for spacing */
+}
+
+#fetchContent {
+    cursor: pointer; /* Changes cursor to pointer on hover */
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+#fetchContent:hover {
+    background-color: #f0f0f0; /* Light grey background on hover */
 }
