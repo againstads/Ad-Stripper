@@ -25,14 +25,21 @@ function triggerFetchContent() {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
 
-            // Exclude contents within specified div classes
-            doc.querySelectorAll('.mod-image, .factbox-content').forEach(elem => elem.remove());
+            // Exclude contents within specified selectors
+            doc.querySelectorAll('.factbox-header, .factbox-content, .mod-image').forEach(elem => elem.remove());
+
+            // Process the document to exclude paragraphs starting with "READ NEXT"
+            Array.from(doc.querySelectorAll('p')).forEach(p => {
+                if (p.textContent.trim().startsWith("READ NEXT")) {
+                    p.remove();
+                }
+            });
 
             let content = '';
             const title = doc.querySelector('title');
             if (title) {
                 let titleText = title.textContent.replace(" - Edinburgh Live", "");
-                content += titleText + " ";
+                content += `<h1 class="headline">${titleText}</h1>`;
             }
 
             const imgSrc = doc.querySelector('.img-container img')?.src;
@@ -43,7 +50,7 @@ function triggerFetchContent() {
             const authorName = doc.querySelector('.author-information-container .author a.publication-theme')?.textContent;
             const publicationTime = doc.querySelector('.time-info .time-container')?.textContent;
             if (authorName && publicationTime) {
-                content += `By ${authorName} | Published on ${publicationTime} `;
+                content += `<p class="author-info">By ${authorName} | Published on ${publicationTime}</p><br><br>`; // Two line breaks after author info
             }
 
             let articleContent = '';
@@ -78,5 +85,7 @@ function flattenContent(element) {
             text += flattenContent(node);
         }
     }
-    return text.replace(/”\. /g, '”. '); // Keep quotes as a continuous paragraph
+    // Replace “.” with “.” to avoid breaking quotes into multiple paragraphs
+    text = text.replace(/”\. /g, '”. ');
+    return text;
 }
