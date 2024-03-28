@@ -16,8 +16,8 @@ function triggerFetchContent() {
         alert('Please enter a URL.');
         return;
     }
-
-    urlInput.value = '';
+    
+    urlInput.value = ''; // Clear input for next request
 
     fetch(url)
         .then(response => response.text())
@@ -41,60 +41,36 @@ function triggerFetchContent() {
             const authorName = doc.querySelector('.author-information-container .author a.publication-theme')?.textContent;
             const publicationTime = doc.querySelector('.time-info .time-container')?.textContent;
             if (authorName && publicationTime) {
-                const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                let formattedTime = publicationTime;
-                try {
-                    const parts = publicationTime.split(", ");
-                    const dateParts = parts[1].split(" ");
-                    const day = dateParts[0];
-                    const month = months[new Date(`${dateParts[1]} 1, 2024`).getMonth()];
-                    const year = dateParts[2];
-                    formattedTime = `${day} ${month} ${year}, ${parts[0]}`;
-                } catch (error) {
-                    console.warn("Could not parse publication time:", publicationTime);
-                }
-
-                content += `<p class="author-info">By ${authorName} | Published on ${formattedTime}</p>`;
+                content += `<p class="author-info">By ${authorName} | Published on ${publicationTime}</p>`;
                 content += `<p class="separator">***</p>`;
             }
 
-let articleContent = '';
-const articleStart = html.indexOf('<!-- Article Start-->') + '<!-- Article Start-->'.length;
-const articleEnd = html.indexOf('<!-- Article End-->');
-if (articleStart > -1 && articleEnd > -1) {
-    articleContent = html.slice(articleStart, articleEnd);
-    const articleFragment = parser.parseFromString(articleContent, 'text/html');
+            // Exclude specific unwanted elements from the article content
+            const unwantedSelectors = ['.mod-image', 'figcaption', 'p:contains("Read more:")', 'p:contains("Sign up for")', 'p:contains("Join")'];
+            unwantedSelectors.forEach(selector => {
+                doc.querySelectorAll(selector).forEach(elem => elem.remove());
+            });
 
-    // Exclude 'mod-image' content
-    const modImages = articleFragment.querySelectorAll('.mod-image');
-    modImages.forEach(img => img.remove());
+            // Handle links by replacing them with text
+            doc.querySelectorAll('a').forEach(link => {
+                const text = document.createTextNode(link.textContent);
+                link.parentNode.replaceChild(text, link);
+            });
 
-    // Also exclude associated 'figcaption' elements for those images
-    const figcaptions = articleFragment.querySelectorAll('figcaption');
-    figcaptions.forEach(caption => caption.remove());
+            // Extract the body's innerHTML, then clean up whitespace
+            let articleContent = doc.body.innerHTML;
+            let cleanedContent = cleanUpWhitespace(articleContent);
 
-    const unwantedElements = articleFragment.querySelectorAll('p');
-    unwantedElements.forEach(p => {
-        const textContentLower = p.textContent.toLowerCase().trim();
-
-        if (textContentLower.includes('read more:') || textContentLower.includes('sign up for') || textContentLower.includes('join')) {
-            p.remove();
-        }
-    });
-
-    const links = articleFragment.querySelectorAll('a');
-    links.forEach(link => {
-        const text = document.createTextNode(link.textContent);
-        link.parentNode.replaceChild(text, link);
-    });
-
-    content += `<div class="content-body">${articleFragment.body.innerHTML}</div>`;
-}
-
-document.getElementById('contentDisplay').innerHTML = content;
+            content += `<div class="content-body">${cleanedContent}</div>`;
+            document.getElementById('contentDisplay').innerHTML = content;
         })
         .catch(error => {
             console.error('Error fetching content:', error);
             alert('Failed to fetch content.');
         });
+}
+
+function cleanUpWhitespace(htmlString) {
+    // Remove excessive whitespace between tags and around the HTML string
+    return htmlString.replace(/>\s+</g, '><').trim();
 }
