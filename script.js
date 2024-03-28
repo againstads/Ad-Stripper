@@ -5,28 +5,38 @@ document.getElementById('fetchContent').addEventListener('click', function() {
         return;
     }
 
-    // This is a placeholder for fetching content. You'd need a server-side proxy or CORS-friendly API.
+    // Placeholder for fetching content; in practice, use a server-side proxy or CORS-friendly API
     fetch(url)
         .then(response => response.text())
         .then(html => {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
-
             let content = '';
 
             // Extract title
             const title = doc.querySelector('title');
             if (title) content += `<h2>${title.textContent}</h2>`;
 
-            // Extract specific div content
+            // Extract specific div content and exclude undesired parts
             const imgContainer = doc.querySelector('.img-container');
-            if (imgContainer) content += `<div>${imgContainer.innerHTML}</div>`;
+            if (imgContainer) {
+                let imgContainerHtml = imgContainer.innerHTML;
+                const readMoreIndex = imgContainerHtml.indexOf('<p><b>READ MORE');
+                if (readMoreIndex !== -1) {
+                    imgContainerHtml = imgContainerHtml.substring(0, readMoreIndex);
+                }
+                content += `<div>${imgContainerHtml}</div>`;
+            }
 
-            // Extract article content
-            const articleStart = html.indexOf('<!-- Article Start-->') + '<!-- Article Start-->'.length;
-            const articleEnd = html.indexOf('<!-- Article End-->');
-            if (articleStart > -1 && articleEnd > -1) {
-                const articleContent = html.slice(articleStart, articleEnd);
+            // Extract and process article content
+            const articleStartIndex = html.indexOf('<!-- Article Start-->') + '<!-- Article Start-->'.length;
+            const articleEndIndex = html.indexOf('<!-- Article End-->');
+            if (articleStartIndex > -1 && articleEndIndex > -1) {
+                let articleContent = html.slice(articleStartIndex, articleEndIndex);
+                const readMoreIndex = articleContent.indexOf('<p><b>READ MORE');
+                if (readMoreIndex !== -1) {
+                    articleContent = articleContent.substring(0, readMoreIndex);
+                }
                 content += `<div>${articleContent}</div>`;
             }
 
