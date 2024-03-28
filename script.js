@@ -17,7 +17,7 @@ function triggerFetchContent() {
         return;
     }
 
-    urlInput.value = '';
+    urlInput.value = ''; // Clear input for next request
 
     fetch(url)
         .then(response => response.text())
@@ -29,33 +29,21 @@ function triggerFetchContent() {
             const title = doc.querySelector('title');
             if (title) {
                 let titleText = title.textContent.replace(" - Edinburgh Live", "");
-                content += `<h1 class="headline">${titleText}</h1>`;
+                // Include the title as part of the continuous text block.
+                content += titleText;
             }
 
             const imgSrc = doc.querySelector('.img-container img')?.src;
             if (imgSrc) {
-                const imgTag = `<img src="${imgSrc}" class="img-responsive">`;
-                content += `<div>${imgTag}</div>`;
+                // Include the main image as an HTML element.
+                content += `<div><img src="${imgSrc}" class="img-responsive" alt="Main Image"></div>`;
             }
 
+            // Include author information and publication time.
             const authorName = doc.querySelector('.author-information-container .author a.publication-theme')?.textContent;
             const publicationTime = doc.querySelector('.time-info .time-container')?.textContent;
             if (authorName && publicationTime) {
-                const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                let formattedTime = publicationTime;
-                try {
-                    const parts = publicationTime.split(", ");
-                    const dateParts = parts[1].split(" ");
-                    const day = dateParts[0];
-                    const month = months[new Date(`${dateParts[1]} 1, 2024`).getMonth()];
-                    const year = dateParts[2];
-                    formattedTime = `${day} ${month} ${year}, ${parts[0]}`;
-                } catch (error) {
-                    console.warn("Could not parse publication time:", publicationTime);
-                }
-
-                content += `<p class="author-info">By ${authorName} | Published on ${formattedTime}</p>`;
-                content += `<p class="separator">***</p>`;
+                content += ` By ${authorName} | Published on ${publicationTime}`;
             }
 
             let articleContent = '';
@@ -65,32 +53,12 @@ function triggerFetchContent() {
                 articleContent = html.slice(articleStart, articleEnd);
                 const articleFragment = parser.parseFromString(articleContent, 'text/html');
 
-                const modImages = articleFragment.querySelectorAll('.mod-image');
-                modImages.forEach(img => img.remove());
-
-                const figcaptions = articleFragment.querySelectorAll('figcaption');
-                figcaptions.forEach(caption => caption.remove());
-
-                const unwantedElements = articleFragment.querySelectorAll('p');
-                unwantedElements.forEach(p => {
-                    const textContentLower = p.textContent.toLowerCase().trim();
-
-                    if (textContentLower.includes('read more:') || textContentLower.includes('sign up for') || textContentLower.includes('join')) {
-                        p.remove();
-                    }
-                });
-
-                const links = articleFragment.querySelectorAll('a');
-                links.forEach(link => {
-                    const text = document.createTextNode(link.textContent);
-                    link.parentNode.replaceChild(text, link);
-                });
-
-                // Apply final whitespace cleanup before setting the content
-                content += `<div class="content-body">${cleanUpWhitespace(articleFragment.body.innerHTML)}</div>`;
+                // Flatten the articleFragment to plain text for the rest of the content.
+                content += ` ${flattenContent(articleFragment.body)}`;
             }
 
-            document.getElementById('contentDisplay').innerHTML = content;
+            // Set the content, using innerHTML for including the main image properly.
+            document.getElementById('contentDisplay').innerHTML = cleanUpWhitespace(content);
         })
         .catch(error => {
             console.error('Error fetching content:', error);
@@ -98,7 +66,20 @@ function triggerFetchContent() {
         });
 }
 
-// Function to clean up whitespace from HTML content
 function cleanUpWhitespace(htmlString) {
-    return htmlString.replace(/\s+/g, ' ').trim();
+    // This function now needs to preserve HTML for the image but clean up text.
+    return htmlString.replace(/\s\s+/g, ' ').trim(); // Reduce multiple whitespace to a single space in text.
+}
+
+function flattenContent(element) {
+    let text = '';
+    for (const node of element.childNodes) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            text += node.textContent + " "; // Add a space to separate text content.
+        } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName !== "SCRIPT" && node.nodeName !== "STYLE") {
+            // Recursively process element nodes to extract their text content, ignoring script and style tags.
+            text += flattenContent(node);
+        }
+    }
+    return text;
 }
