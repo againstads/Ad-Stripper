@@ -1,8 +1,16 @@
-body {
+ebody {
     font-family: Arial, sans-serif;
     margin: 20px;
 }
 
 #contentDisplay {
     margin-top: 20px;
+}
+
+.img-responsive {
+    width: 100%; /* Makes the image responsive */
+    max-width: 800px; /* Maximum width */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Display block to allow margin auto to work */
+    margin: 0 auto; /* Center the image */
 }
