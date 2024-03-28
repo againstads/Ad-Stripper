@@ -17,7 +17,7 @@ function triggerFetchContent() {
         return;
     }
 
-    urlInput.value = ''; // Clear input for next request
+    urlInput.value = '';
 
     fetch(url)
         .then(response => response.text())
@@ -25,28 +25,6 @@ function triggerFetchContent() {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
 
-            // Exclude specific content such as 'mod-image' and 'figcaption'
-            const modImages = doc.querySelectorAll('.mod-image');
-            modImages.forEach(img => img.remove());
-
-            const figcaptions = doc.querySelectorAll('figcaption');
-            figcaptions.forEach(caption => caption.remove());
-
-            const unwantedParagraphs = doc.querySelectorAll('p');
-            unwantedParagraphs.forEach(p => {
-                const textContentLower = p.textContent.toLowerCase().trim();
-                if (textContentLower.includes('read more:') || textContentLower.includes('sign up for') || textContentLower.includes('join')) {
-                    p.remove();
-                }
-            });
-
-            const links = doc.querySelectorAll('a');
-            links.forEach(link => {
-                const text = document.createTextNode(link.textContent);
-                link.parentNode.replaceChild(text, link);
-            });
-
-            // Construct the final content
             let content = '';
             const title = doc.querySelector('title');
             if (title) {
@@ -63,12 +41,57 @@ function triggerFetchContent() {
             const authorName = doc.querySelector('.author-information-container .author a.publication-theme')?.textContent;
             const publicationTime = doc.querySelector('.time-info .time-container')?.textContent;
             if (authorName && publicationTime) {
-                content += `<p class="author-info">By ${authorName} | Published on ${publicationTime}</p>`;
+                const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                let formattedTime = publicationTime;
+                try {
+                    const parts = publicationTime.split(", ");
+                    const dateParts = parts[1].split(" ");
+                    const day = dateParts[0];
+                    const month = months[new Date(`${dateParts[1]} 1, 2024`).getMonth()];
+                    const year = dateParts[2];
+                    formattedTime = `${day} ${month} ${year}, ${parts[0]}`;
+                } catch (error) {
+                    console.warn("Could not parse publication time:", publicationTime);
+                }
+
+                content += `<p class="author-info">By ${authorName} | Published on ${formattedTime}</p>`;
                 content += `<p class="separator">***</p>`;
             }
 
-            content += `<div class="content-body">${doc.body.innerHTML}</div>`;
-            document.getElementById('contentDisplay').innerHTML = content;
+let articleContent = '';
+const articleStart = html.indexOf('<!-- Article Start-->') + '<!-- Article Start-->'.length;
+const articleEnd = html.indexOf('<!-- Article End-->');
+if (articleStart > -1 && articleEnd > -1) {
+    articleContent = html.slice(articleStart, articleEnd);
+    const articleFragment = parser.parseFromString(articleContent, 'text/html');
+
+    // Exclude 'mod-image' content
+    const modImages = articleFragment.querySelectorAll('.mod-image');
+    modImages.forEach(img => img.remove());
+
+    // Also exclude associated 'figcaption' elements for those images
+    const figcaptions = articleFragment.querySelectorAll('figcaption');
+    figcaptions.forEach(caption => caption.remove());
+
+    const unwantedElements = articleFragment.querySelectorAll('p');
+    unwantedElements.forEach(p => {
+        const textContentLower = p.textContent.toLowerCase().trim();
+
+        if (textContentLower.includes('read more:') || textContentLower.includes('sign up for') || textContentLower.includes('join')) {
+            p.remove();
+        }
+    });
+
+    const links = articleFragment.querySelectorAll('a');
+    links.forEach(link => {
+        const text = document.createTextNode(link.textContent);
+        link.parentNode.replaceChild(text, link);
+    });
+
+    content += `<div class="content-body">${articleFragment.body.innerHTML}</div>`;
+}
+
+document.getElementById('contentDisplay').innerHTML = content;
         })
         .catch(error => {
             console.error('Error fetching content:', error);
