@@ -1,17 +1,15 @@
 body {
-    font-family: 'Lato', sans-serif; /* Applying Lato font for consistency */
+    font-family: 'Lato', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #fff; /* Set background to white */
-    color: #000; /* Set text color to black */
+    background-color: #fff;
+    color: #000;
 }
 
 #content {
-    background-color: #f9f9f9;
     width: 50%;
-    margin: 0 auto; /* Simplified centering */
+    margin: 0 auto;
     padding: 45px 25px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: adds a subtle shadow for depth */
 }
 
 .img-responsive {
@@ -25,7 +23,7 @@ h1, .headline {
 }
 
 .author-info, .content-body, #urlInput, #fetchContent {
-    font-family: 'Lato', sans-serif; /* Ensuring form elements also use Lato */
+    font-family: 'Lato', sans-serif;
 }
 
 .author-info {
@@ -48,21 +46,26 @@ h1, .headline {
     margin: 10px 0;
 }
 
-/* Styling for input and button */
-#urlInput, #fetchContent {
-    font-size: 1.1em; /* Larger font size */
-    padding: 10px 15px; /* Increased padding for larger appearance */
-    border: 2px solid #000; /* Solid black border */
-    background-color: #fff; /* White background */
-    border-radius: 25px; /* Rounded corners */
-    margin: 5px 0; /* Margin for spacing */
+#urlInput {
+    font-size: 1.1em;
+    padding: 10px 15px;
+    border: 2px solid #000;
+    background-color: #fff;
+    border-radius: 25px;
+    margin: 5px 0 15px 0;
 }
 
 #fetchContent {
-    cursor: pointer; /* Changes cursor to pointer on hover */
-    transition: background-color 0.3s ease; /* Smooth transition for background color */
+    font-size: 1.1em;
+    padding: 10px 15px;
+    border: 2px solid #000;
+    background-color: #fff;
+    border-radius: 25px;
+    margin: 5px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 #fetchContent:hover {
-    background-color: #f0f0f0; /* Light grey background on hover */
+    background-color: #f0f0f0;
 }
