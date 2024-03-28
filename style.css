@@ -46,13 +46,20 @@ h1, .headline {
     margin: 10px 0;
 }
 
+.input-container {
+    display: flex; /* Aligns children (input and button) inline */
+    align-items: center; /* Centers items vertically */
+    justify-content: start; /* Aligns items to the start of the container */
+    gap: 10px; /* Adds space between the input and button */
+}
+
 #urlInput {
     font-size: 1.1em;
     padding: 10px 15px;
     border: 2px solid #000;
     background-color: #fff;
     border-radius: 25px;
-    margin: 5px 0 15px 0;
+    flex-grow: 1; /* Allows the input to grow and fill available space */
 }
 
 #fetchContent {
@@ -61,7 +68,6 @@ h1, .headline {
     border: 2px solid #000;
     background-color: #fff;
     border-radius: 25px;
-    margin: 5px 0;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
